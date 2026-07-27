@@ -1312,3 +1312,11 @@ img {
         padding: 1.2rem;
     }
 }
+#moonAccess {
+    opacity: 0.2;
+    transition: opacity 0.3s ease;
+}
+
+#moonAccess:hover {
+    opacity: 0.6;
+}

@@ -1,4 +1,176 @@
 /* ========================================
+   SCRIPT.JS — Main JavaScript
+   Added: Secret Moon Access
+   ======================================== */
+
+// ========================================
+// 🌙 SECRET ADMIN ACCESS
+// ========================================
+
+let moonClickCount = 0;
+let moonClickTimer = null;
+
+// Setup moon click listener
+function setupMoonAccess() {
+    const moonElement = document.getElementById('moonAccess');
+    if (!moonElement) return;
+    
+    moonElement.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        moonClickCount++;
+        
+        clearTimeout(moonClickTimer);
+        moonClickTimer = setTimeout(() => {
+            moonClickCount = 0;
+        }, 2000);
+        
+        if (moonClickCount === 3) {
+            moonClickCount = 0;
+            clearTimeout(moonClickTimer);
+            triggerPasswordPrompt();
+        }
+    });
+}
+
+// Show password prompt
+function triggerPasswordPrompt() {
+    const overlay = document.createElement('div');
+    overlay.id = 'adminLoginOverlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.92);
+        backdrop-filter: blur(20px);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    overlay.innerHTML = `
+        <div style="
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(0,0,0,0.5);
+        ">
+            <div style="font-size: 4rem; margin-bottom: 0.5rem;">🔐</div>
+            <h2 style="color: #fff; font-weight: 600; margin-bottom: 0.5rem;">Admin Access</h2>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 1.5rem;">Enter the secret password</p>
+            <input type="password" id="secretPasswordInput" placeholder="Enter password..." style="
+                width: 100%;
+                padding: 0.8rem 1rem;
+                background: rgba(255,255,255,0.04);
+                border: 1px solid rgba(255,255,255,0.06);
+                border-radius: 12px;
+                color: #fff;
+                font-size: 1rem;
+                font-family: 'Inter', sans-serif;
+                margin-bottom: 1rem;
+                text-align: center;
+            " />
+            <button id="secretLoginBtn" style="
+                width: 100%;
+                padding: 0.8rem;
+                background: rgba(255,255,255,0.06);
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 12px;
+                color: #fff;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-family: 'Inter', sans-serif;
+            ">Unlock Dashboard</button>
+            <p id="secretLoginError" style="color: #ff6b6b; margin-top: 0.8rem; font-size: 0.85rem; display: none;">
+                ❌ Incorrect password. Try again.
+            </p>
+            <button id="closeLoginOverlay" style="
+                margin-top: 1rem;
+                background: none;
+                border: none;
+                color: #555;
+                cursor: pointer;
+                font-size: 0.8rem;
+                font-family: 'Inter', sans-serif;
+            ">Cancel</button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    const input = document.getElementById('secretPasswordInput');
+    input.focus();
+    
+    document.getElementById('secretLoginBtn').addEventListener('click', function() {
+        const password = input.value.trim();
+        if (password === '@sande263') {
+            sessionStorage.setItem('adminAuthenticated', 'true');
+            sessionStorage.setItem('adminLoginTime', Date.now().toString());
+            overlay.remove();
+            window.location.href = 'admin.html';
+        } else {
+            const error = document.getElementById('secretLoginError');
+            error.style.display = 'block';
+            input.value = '';
+            input.focus();
+            setTimeout(() => { error.style.display = 'none'; }, 3000);
+        }
+    });
+    
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('secretLoginBtn').click();
+        }
+    });
+    
+    document.getElementById('closeLoginOverlay').addEventListener('click', function() {
+        overlay.remove();
+        moonClickCount = 0;
+    });
+    
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+            overlay.remove();
+            moonClickCount = 0;
+        }
+    });
+}
+
+// ========================================
+// Add fade-in animation style
+// ========================================
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+`;
+document.head.appendChild(style);
+
+// ========================================
+// Initialize
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    setupMoonAccess();
+    
+    // ... rest of your existing script.js code ...
+    // (Keep your existing code below this)
+});
+/* ========================================
    SCRIPT.JS — Brandon Sande Portfolio
    Animations, interactions, nav toggle
    ======================================== */
